@@ -1,0 +1,50 @@
+# Directory to store files downloaded for Minikube
+minikube_download_dir: "{{ x_ansible_download_dir | default(ansible_env.HOME + '/.ansible/tmp/downloads') }}"
+
+# Dir where Minikube should be installed
+minikube_install_dir: '/usr/local/bin'
+
+# Path where Minikube should be installed
+minikube_install_path: '{{ minikube_install_dir }}/minikube'
+
+# Mirror to download the Minikube from
+minikube_mirror: 'https://github.com/kubernetes/minikube/releases/download/v{{ minikube_version }}'
+
+# The OS of the Minikube redistributable
+minikube_os: 'linux'
+
+# The CPU architecture of the Minikube redistributable
+minikube_architecture: 'amd64'
+
+# File name of the Minikube redistributable file
+minikube_redis_filename: 'minikube-{{ minikube_os }}-{{ minikube_architecture }}'
+
+# File name of the Minikube download file
+minikube_download_filename: '{{ minikube_redis_filename }}-{{ minikube_version }}'
+#kubectl type
+kubectl_download_filetype: "binary"
+
+# SHA512 checksum of the .tar.gz file (see https://github.com/kubernetes/kubernetes/blob/master/CHANGELOG/CHANGELOG-1.20.md#client-binaries)
+kubectl_checksum_archive: "sha512:e4513cdd65ed980d493259cc7eaa63c415f97516db2ea45fa8c743a6e413a0cdaf299d03dd799286cf322182bf9694204884bb0dd0037cf44592ddfa5e51f183"
+# SHA512 checksum of the binary (see https://storage.googleapis.com/kubernetes-release/release/v1.20.2/bin/linux/amd64/kubectl.sha512)
+kubectl_checksum_binary: "sha512:95bc86fef323bf6e4c340565a8d8284c03ed5dbf44d7d5ec271ed9f1347c54d0484437fc598ff99a2000ed60064e7a92c64484e1764bea6dbd2082ff0c95e7f1"
+# Directory to store the kubeclient archive
+kubectl_tmp_directory: /tmp
+
+# Specifies the permissions of the "kubectl" binary
+kubectl_binary_mode: "0755"
+
+# Operarting system on which "kubectl" should run on
+kubectl_os: "linux" # use "darwin" for MacOS X, "windows" for Windows
+
+# Processor architecture "kubectl" should run on
+kubectl_arch: "amd64" # other possible values: "386","arm64","arm","ppc64le","s390x"
+
+# Owner of "kubectl" binary
+kubectl_owner: "root"
+
+# Group of "kubectl" binary
+kubectl_group: "ubuntu"
+
+# Where to install "kubectl" binary
+kubectl_bin_directory: "/usr/local/bin"

@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: devops-test
+  namespace: default
+  labels:
+    app: devops-test
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: devops-test
+  template:
+    metadata:
+      labels:
+        app: devops-test
+    spec:
+      containers:
+      #secret is not required for public images.
+      - name: devops-test
+        image: sarath204/devops-test:v1

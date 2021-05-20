@@ -1,0 +1,7 @@
+---
+- hosts: devops-test
+  become: yes
+  tasks:
+    - name: install docker, minikube & k8s deployment
+      include_role: 
+        name: docker-role

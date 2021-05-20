@@ -1,0 +1,15 @@
+#docker hub
+hub_username: xxxxxxxxxx
+hub_password: xxxxxxxxx
+hub_registry: <UserName>/<RepoName>
+
+
+#ubuntu usernam:
+username: ubuntu
+
+# Minikube version number
+minikube_version: '1.19.0'
+
+# "kubectl" version to install
+kubectl_version: "1.20.2"
+

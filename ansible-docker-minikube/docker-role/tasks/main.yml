@@ -1,0 +1,8 @@
+---
+- name: Include docker installation, build image & push
+  include_tasks: docker.yml
+ 
+- name: minikube installations & deploy devops-test app
+  include_tasks: minikube.yml
+  
+
