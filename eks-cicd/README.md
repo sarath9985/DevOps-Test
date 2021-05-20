@@ -27,7 +27,6 @@
 
         
  ## Output:
-    kubernetes pods logs
 
     kubectl get no --kubeconfig kubeconfig_devops-test
 
