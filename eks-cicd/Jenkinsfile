@@ -1,0 +1,93 @@
+properties([
+    buildDiscarder(logRotator(daysToKeepStr: '', numToKeepStr: '5')),
+])
+node {
+try {
+
+    notifyBuild('STARTED') 
+    // chekout the code
+    stage('checkout') {
+        checkout scm
+    }
+    stage('init') {
+        sh 'terraform init'
+    }
+    stage('plan') {
+        sh 'terraform plan'
+    }
+    stage('approval') {
+        try {
+             timeout(time: 600, unit: 'SECONDS') {
+               input message: 'Apply Plan?', ok: 'Apply'
+               }
+             apply = true
+             sh 'terraform apply -auto-approve'             
+            } catch (err) {
+              apply = false
+              currentBuild.result = 'ABORTED'
+            }
+
+    }   
+         
+} catch (e) {
+    currentBuild.result = "FAILED"
+    notifyFailed()
+    print e
+    throw e
+} finally {
+     // Success or failure, always send notifications
+     notifyBuild(currentBuild.result)
+   }
+ }
+   
+
+
+ def notifyBuild(String buildStatus = 'STARTED') {
+   // build status of null means successful
+   buildStatus =  buildStatus ?: 'SUCCESSFUL'
+ 
+   // Default values
+   def colorName = 'RED'
+   def colorCode = '#FF0000'
+   def subject = "terraform-${buildStatus}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'"
+   def summary = "${subject} (${env.BUILD_URL})"
+   def details = """<p>STARTED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]':</p>
+     <p>Check console output at "<a href="${env.BUILD_URL}console">${env.JOB_NAME} [${env.BUILD_NUMBER}]</a>"</p>"""
+ 
+   // Override default values based on build status
+   if (buildStatus == 'STARTED') {
+     color = 'YELLOW'
+     colorCode = '#FFFF00'
+     details = """<p>STARTED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]':</p>
+     <p>Check console output at "<a href="${env.BUILD_URL}console">${env.JOB_NAME} [${env.BUILD_NUMBER}]</a>"</p>
+      Go to above url, Check all the listed changes.Then approve or abort the changes"""
+   } else if (buildStatus == 'SUCCESSFUL') {
+     color = 'GREEN'
+     colorCode = '#00FF00'
+     details = """<p>SUCCESSFUL: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]':</p>
+     <p>Check console output at "<a href="${env.BUILD_URL}console">${env.JOB_NAME} [${env.BUILD_NUMBER}]</a>"</p>"""
+     
+   } else if (buildStatus == 'ABORTED') {
+     color = 'GREY'
+     details = """<p>ABORTED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]':</p>
+     <p>Check console output at "<a href="${env.BUILD_URL}console">${env.JOB_NAME} [${env.BUILD_NUMBER}]</a>"</p>
+      No changes. Infrastructure is up-to-date
+      OR
+      Plan not approved"""
+   }else {
+     color = 'RED'
+     colorCode = '#FF0000'
+     details = """<p>FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]':</p>
+     <p>Check console output at "<a href="${env.BUILD_URL}console">${env.JOB_NAME} [${env.BUILD_NUMBER}]</a>"</p>"""
+   }
+ 
+ 
+   emailext (
+       subject: subject,
+       to: 'yourmail@gmail.com',
+       body: details,
+       recipientProviders: [[$class: 'DevelopersRecipientProvider']]
+     )
+ }
+
+
